@@ -32,6 +32,20 @@ function toggleWorkItem(item) {
 workItems.forEach(item => {
   const summary = item.querySelector('.work-toggle');
   const button = summary.querySelector('button');
+  let hoverTimer;
+
+  summary.addEventListener('mouseenter', () => {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches || item.classList.contains('is-open')) return;
+    window.clearTimeout(hoverTimer);
+    hoverTimer = window.setTimeout(() => {
+      workItems.forEach(other => {
+        if (other !== item && other.classList.contains('is-open')) setWorkOpen(other, false);
+      });
+      setWorkOpen(item, true);
+    }, reduceMotion ? 0 : 140);
+  });
+
+  summary.addEventListener('mouseleave', () => window.clearTimeout(hoverTimer));
   button.addEventListener('click', event => { event.stopPropagation(); toggleWorkItem(item); });
   summary.addEventListener('click', () => toggleWorkItem(item));
   summary.addEventListener('keydown', event => {
